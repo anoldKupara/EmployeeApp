@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using My_Employee_App.Entities;
 
 namespace My_Employee_App.Data
 {

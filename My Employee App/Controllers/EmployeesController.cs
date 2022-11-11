@@ -1,13 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using My_Employee_App.Data;
+using My_Employee_App.Entities;
+using My_Employee_App.Models;
 
 namespace My_Employee_App.Controllers
 {
     public class EmployeesController : Controller
     {
+        private readonly MyDbContext _dbContext;
+        public EmployeesController(MyDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public MyDbContext DbContext { get; }
+
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Create()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(AddEmployeeViewModel addEmployeeRequest)
+        {
+            var employee = new Employee()
+            {
+                Id = Guid.NewGuid(),
+                Name = addEmployeeRequest.Name,
+                Department = addEmployeeRequest.Department,
+                Email = addEmployeeRequest.Email,
+                Salary = addEmployeeRequest.Salary,
+                DateOfBirth = addEmployeeRequest.DateOfBirth
+            };
+            await _dbContext.Employees.AddAsync(employee);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction("Create");
         }
     }
 }

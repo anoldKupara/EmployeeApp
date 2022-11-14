@@ -44,40 +44,43 @@ namespace My_Employee_App.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> View(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
             var employee = await _dbContext.Employees.FirstOrDefaultAsync(e => e.Id == id);
-            
-            
-            return View(employee);
+
+            if (employee != null)
+            {
+                var employeeModel = new UpdateEmployeeViewModel()
+                {
+                    Id = employee.Id,
+                    Name = employee.Name,
+                    Department = employee.Department,
+                    Email = employee.Email,
+                    Salary = employee.Salary,
+                    DateOfBirth = employee.DateOfBirth
+                };
+                return await Task.Run(() => View("Edit", employeeModel));
+            }
+            return RedirectToAction("Index");
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Edit(Guid id)
-        //{
-        //    var employee = await _dbContext.Employees.FindAsync(id);
-        //    var editEmployeeViewModel = new EditEmployeeViewModel()
-        //    {
-        //        Id = employee.Id,
-        //        Name = employee.Name,
-        //        Department = employee.Department,
-        //        Email = employee.Email,
-        //        Salary = employee.Salary,
-        //        DateOfBirth = employee.DateOfBirth
-        //    };
-        //    return View(editEmployeeViewModel);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Edit(EditEmployeeViewModel editEmployeeRequest)
-        //{
-        //    var employee = await _dbContext.Employees.FindAsync(editEmployeeRequest.Id);
-        //    employee.Name = editEmployeeRequest.Name;
-        //    employee.Department = editEmployeeRequest.Department;
-        //    employee.Email = editEmployeeRequest.Email;
-        //    employee.Salary = editEmployeeRequest.Salary;
-        //    employee.DateOfBirth = editEmployeeRequest.DateOfBirth;
-        //    await _dbContext.SaveChangesAsync();
-        //    return RedirectToAction("Index");
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Edit(UpdateEmployeeViewModel updateEmployeeRequest)
+        {
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(e => e.Id == updateEmployeeRequest.Id);
+            
+            if (employee != null)
+            {
+                employee.Name = updateEmployeeRequest.Name;
+                employee.Department = updateEmployeeRequest.Department;
+                employee.Email = updateEmployeeRequest.Email;
+                employee.Salary = updateEmployeeRequest.Salary;
+                employee.DateOfBirth = updateEmployeeRequest.DateOfBirth;
+                await _dbContext.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+        }
     }
 }

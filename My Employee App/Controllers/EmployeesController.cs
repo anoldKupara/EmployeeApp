@@ -82,5 +82,17 @@ namespace My_Employee_App.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            if (employee != null)
+            {
+                _dbContext.Employees.Remove(employee);
+                await _dbContext.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
     }
 }

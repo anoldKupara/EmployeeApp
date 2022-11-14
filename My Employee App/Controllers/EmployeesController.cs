@@ -13,14 +13,12 @@ namespace My_Employee_App.Controllers
         {
             _dbContext = dbContext;
         }
-
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var employees = await _dbContext.Employees.ToListAsync();
             return View(employees);
         }
-
-        public MyDbContext DbContext { get; }
 
         [HttpGet]
         public IActionResult Create()
@@ -44,5 +42,42 @@ namespace My_Employee_App.Controllers
             await _dbContext.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> View(Guid id)
+        {
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            
+            
+            return View(employee);
+        }
+
+        //[HttpGet]
+        //public async Task<IActionResult> Edit(Guid id)
+        //{
+        //    var employee = await _dbContext.Employees.FindAsync(id);
+        //    var editEmployeeViewModel = new EditEmployeeViewModel()
+        //    {
+        //        Id = employee.Id,
+        //        Name = employee.Name,
+        //        Department = employee.Department,
+        //        Email = employee.Email,
+        //        Salary = employee.Salary,
+        //        DateOfBirth = employee.DateOfBirth
+        //    };
+        //    return View(editEmployeeViewModel);
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> Edit(EditEmployeeViewModel editEmployeeRequest)
+        //{
+        //    var employee = await _dbContext.Employees.FindAsync(editEmployeeRequest.Id);
+        //    employee.Name = editEmployeeRequest.Name;
+        //    employee.Department = editEmployeeRequest.Department;
+        //    employee.Email = editEmployeeRequest.Email;
+        //    employee.Salary = editEmployeeRequest.Salary;
+        //    employee.DateOfBirth = editEmployeeRequest.DateOfBirth;
+        //    await _dbContext.SaveChangesAsync();
+        //    return RedirectToAction("Index");
+        //}
     }
 }
